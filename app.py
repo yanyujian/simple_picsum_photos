@@ -3,7 +3,7 @@
   * created at : 2025-06-27 10:14:08
   * description: 
 '''
-import random
+import random as pyrandom
 import hashlib
 from fastapi import FastAPI, Response, Query
 from PIL import Image
@@ -17,14 +17,14 @@ app = FastAPI()
 def crop_image(
     width: int,
     height: int,
-    file: int = Query(None)
+    random: int = Query()
 ):
     # Determine file path
-    if file:
-        file = max(1, min(file, 3))  # force file in [1,3]
+    if random:
+        file = max(1, min(random, 3))  # force file in [1,3]
         BASE_IMAGE_PATH = f"./pictures/{file}.png"
     else:
-        BASE_IMAGE_PATH = random.choice(['./pictures/1.png', './pictures/2.png', './pictures/3.png'])
+        BASE_IMAGE_PATH = pyrandom.choice(['./pictures/1.png', './pictures/2.png', './pictures/3.png'])
 
     if not os.path.exists(BASE_IMAGE_PATH):
         return {"error": f"Base image not found: {BASE_IMAGE_PATH}"}
@@ -59,6 +59,6 @@ def crop_image(
         return Response(image_bytes, media_type="image/jpeg", headers=headers)
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8080)
+    uvicorn.run("app:app", host="0.0.0.0", port=33536)
 
 
