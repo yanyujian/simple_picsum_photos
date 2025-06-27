@@ -61,7 +61,7 @@ def realWorker(width, height, random):
 def crop_image(
         width: int,
         height: int,
-        random: Optional[int] = Query()
+        random: Optional[int] = Query(None)
 ):
     try:
         return realWorker(width, height, random)
