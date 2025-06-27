@@ -5,6 +5,8 @@
 '''
 import random as pyrandom
 import hashlib
+from typing import Optional
+
 from fastapi import FastAPI, Response, Query
 from PIL import Image
 from io import BytesIO
@@ -13,12 +15,8 @@ import os
 
 app = FastAPI()
 
-@app.get("/{width}/{height}")
-def crop_image(
-    width: int,
-    height: int,
-    random: int = Query()
-):
+
+def realWorker(width, height, random):
     # Determine file path
     if random:
         file = max(1, min(random, 3))  # force file in [1,3]
@@ -58,7 +56,19 @@ def crop_image(
 
         return Response(image_bytes, media_type="image/jpeg", headers=headers)
 
+
+@app.get("/{width}/{height}")
+def crop_image(
+        width: int,
+        height: int,
+        random: Optional[int] = Query()
+):
+    try:
+        return realWorker(width, height, random)
+    except Exception as e:
+        print(f"Error processing image: {e}")
+        return Response(content=str(e), status_code=500)
+
+
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=33536)
-
-
